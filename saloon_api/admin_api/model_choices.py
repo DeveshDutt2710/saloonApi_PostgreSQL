@@ -1,0 +1,9 @@
+PROFILE_TYPE_VENDOR = "Vendor"
+PROFILE_TYPE_CUSTOMER = 'Customer'
+PROFILE_TYPE_ADMIN = 'Admin'
+
+PROFILE_TYPE = (
+    (PROFILE_TYPE_VENDOR, "Vendor"),
+    (PROFILE_TYPE_CUSTOMER, "Customer"),
+    (PROFILE_TYPE_ADMIN, "Admin")
+)
