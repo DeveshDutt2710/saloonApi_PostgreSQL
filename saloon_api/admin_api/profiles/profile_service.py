@@ -19,7 +19,7 @@ class ProfileService():
 
     def get_profile_id(self):
         return self.profile_id
-        
+     
     def _create_user_contact_details(self, contact_details):
         return Contact.create_contact(**contact_details)
 
