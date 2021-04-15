@@ -20,8 +20,8 @@ class ProfileService():
     def get_profile_id(self):
         return self.profile_id
      
-    def _create_user_contact_details(self, contact_details):
-        return Contact.create_contact(**contact_details)
+    def _create_user_contact_details(self, contact_details, profile):
+        return Contact.create_contact(profile = profile, **contact_details)
 
     def _create_user_address_details(self, address_details):
         return Address.create_address(address_details)
@@ -31,7 +31,9 @@ class ProfileService():
 
 
     def _save_profile(self, profile):
-        profile.save()
+        saved_profile = profile.save()
+        return saved_profile
+        
 
     def _update_profile_details(self, profile, data):
         profile.name = data['name']
@@ -75,22 +77,29 @@ class ProfileService():
         return response
 
     def create_profile(self, data) -> dict:
+        saved_profile = self._save_profile(Profiles(**data))
+
+        
         if 'contact' in data:
-            contact = self._create_user_contact_details(data.pop('contact'))
-            data['contact'] = contact
+            contacts = data.pop('contact')
+            print(type(contacts))
+            print("\nCONTACTS : "+(str)(contacts))
+            for contact in contacts:
+                contact = self._create_user_contact_details(contact, profile = saved_profile)
+            
 
-        if 'address' in data:
-            address = self._create_user_address_details(data.pop('address'))
-            data['address'] = address
+        # if 'address' in data:
+        #     address = self._create_user_address_details(data.pop('address'))
+        #     data['address'] = address
 
-        if 'privacy_setting' in data:
-            privacy_setting = self._create_user_privacy_settings(data.pop('privacy_setting'))
-            data['privacy_setting'] = privacy_setting
+        # if 'privacy_setting' in data:
+        #     privacy_setting = self._create_user_privacy_settings(data.pop('privacy_setting'))
+        #     data['privacy_setting'] = privacy_setting
 
-        self._save_profile(Profiles(**data))
-
+        
         response = {
             'success': True,
+            'profile_id' : saved_profile.id
         }
 
         return response

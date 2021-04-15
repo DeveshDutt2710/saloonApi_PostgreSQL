@@ -3,12 +3,29 @@ from utility.exception_utilities import *
 from utility.time_utilities import TimeUtilities
 from datetime import datetime
 from django.db import models
+import uuid
 
+
+'''
+MODEL META CLASS: 
+    Model metadata is “anything that’s not a field”, 
+    such as ordering options (ordering), database table name (db_table), 
+    or human-readable singular and plural names (verbose_name and verbose_name_plural). 
+    None are required, and adding class Meta to a model is completely optional.
+
+'''
 
 class PrivacySettings(models.Model):
     profile = models.ForeignKey('Profiles', on_delete=models.CASCADE, null=True)
     contact_setting = models.BooleanField(default=True)
     address_setting = models.BooleanField(default=True)
+
+    '''
+    A @staticmethod is a method that knows nothing about
+    the class or instance it was called on unless explicitly given. 
+    It just gets the arguments that were passed, no implicit first argument 
+    and It's definition is immutable via inheritance.
+    '''
 
     @staticmethod
     def create_privacy_setting(data):
@@ -25,6 +42,8 @@ class PrivacySettings(models.Model):
 
 
 class Address(models.Model):
+    
+    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     house_no = models.CharField(max_length=100, blank=True)
     locality = models.CharField(max_length=100, blank=True)
     street = models.CharField(max_length=100, blank=True)
@@ -54,41 +73,30 @@ class Address(models.Model):
 
 
 
-class Contact(models.Model):
-    phone = models.BigIntegerField()
-    email = models.EmailField()
-
-    @staticmethod
-    def create_contact(email, phone):
-        contact = Contact(email=email, phone=phone)
-        contact.save()
-
-        return contact
-
-    def update_contact(self, data):
-        self.phone = data.get('phone', self.phone)
-        self.email = data.get('email', self.email)
-        self.save()
-
-
 class Profiles(models.Model):
+    #ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, null=False)
     #account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True)
     profile_type = models.CharField(choices=PROFILE_TYPE, max_length=1024, default=PROFILE_TYPE_CUSTOMER)
 
     vendor_description = models.TextField(null=True)
-    contact = models.OneToOneField(Contact, on_delete=models.CASCADE, related_name='profile_contact_details')
+    '''
+    ONE TO ONE FIELD:
+    this is similar to a ForeignKey with unique=True, 
+    but the "reverse" side of the relation will directly return a single object.    
+    '''
+    #contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='profile_contact_details')
 
-    address = models.OneToOneField(Address, on_delete=models.CASCADE, related_name='profile_address_details', null=True)
+    #address = models.OneToOneField(Address, on_delete=models.CASCADE, related_name='profile_address_details', null=True)
 
     privacy_setting = models.OneToOneField(PrivacySettings, on_delete=models.CASCADE, null=True)
 
     dob = models.DateTimeField()
 
     gender = models.CharField(max_length=10)
-    image = models.TextField()
+    image = models.URLField(max_length=1000)
 
-    last_app_activity = models.DateTimeField(null=True)
+    last_app_activity = models.DateTimeField()
 
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
@@ -96,7 +104,7 @@ class Profiles(models.Model):
     is_deleted = models.BooleanField(default=False)
     is_admin_verified = models.BooleanField(default=False)
 
-    my_coupons = models.TextField()
+    
 
     def update_privacy_setting(self, data):
         self.name = data.get('name', self.name)
@@ -141,6 +149,29 @@ class Profiles(models.Model):
             self.created_at = current_time
 
         self.updated_at = current_time
+        self.last_app_activity=current_time
+
 
         super(Profiles, self).save(*args, **kwargs)
+        print("profile id "+(str)(self.id))
+        return self
 
+
+
+class Contact(models.Model):
+    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    phone = models.BigIntegerField()
+    email = models.EmailField()
+    profile=models.ForeignKey(Profiles,on_delete=models.CASCADE,default = 1, related_name='profile_contacts_rn')
+
+    @staticmethod
+    def create_contact(profile, email, phone):
+        contact = Contact(email=email, phone=phone, profile = profile)
+        contact.save()
+
+        return contact
+
+    def update_contact(self, data):
+        self.phone = data.get('phone', self.phone)
+        self.email = data.get('email', self.email)
+        self.save()

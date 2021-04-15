@@ -21,12 +21,6 @@ class AddressSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ContactSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Contact
-        fields = '__all__'
-
 
 class PrivacySettingsSerializer(serializers.ModelSerializer):
 
@@ -34,22 +28,33 @@ class PrivacySettingsSerializer(serializers.ModelSerializer):
         model = PrivacySettings
         fields = '__all__'
 
+class ContactSerializer(serializers.ModelSerializer):
+    #profile = ProfileSerializer(many = True, required = False)
+
+    class Meta:
+        model = Contact
+        fields = '__all__'
+
+
 
 class ProfileSerializer(serializers.ModelSerializer):
-    address = AddressSerializer()
-    contact = ContactSerializer()
-    privacy_setting = PrivacySettingsSerializer()
+    profile_contacts_rn = ContactSerializer(many=True, read_only=True)
+    #address = AddressSerializer()
+    
+    #privacy_setting = PrivacySettingsSerializer()
 
     class Meta:
         model = Profiles
         fields = '__all__'
 
-    def to_representation(self, profile):
-        data = super(ProfileSerializer, self).to_representation(profile)
-        fields = self._readable_fields
+    # def to_representation(self, profile):
+    #     data = super(ProfileSerializer, self).to_representation(profile)
+    #     fields = self._readable_fields
 
-        for field in fields:
-            if data[field.field_name] is None:
-                del data[field.field_name]
+    #     for field in fields:
+    #         if data[field.field_name] is None:
+    #             del data[field.field_name]
 
-        return data
+    #     return data
+
+
