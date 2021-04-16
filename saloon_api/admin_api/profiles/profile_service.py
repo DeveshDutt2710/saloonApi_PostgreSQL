@@ -36,15 +36,20 @@ class ProfileService():
         
 
     def _update_profile_details(self, profile, data):
-        profile.name = data['name']
-        profile.account = data['account']
-        profile.profile_type = data['profile_type']
-        profile.vendor_description = data['vendor_description']
-        profile.dob = data['dob']
-        profile.gender = data['gender']
-        profile.image = data['image']
-        profile.last_app_activity = data['last_app_activity']
-        profile.is_admin_verified = data['is_admin_verified']
+        if 'name' in data: 
+            profile.name = data['name']
+        if 'profile_type' in data: 
+            profile.profile_type = data['profile_type']
+        if 'vendor_description' in data: 
+            profile.vendor_description = data['vendor_description']
+        if 'dob' in data: 
+            profile.dob = data['dob']
+        if 'gender' in data: 
+            profile.gender = data['gender']
+        if 'image' in data: 
+            profile.image = data['image']
+        if 'is_admin_verified' in data: 
+            profile.is_admin_verified = data['is_admin_verified']
 
         self._save_profile(profile)
 
@@ -138,9 +143,14 @@ class ProfileService():
 
     def search_profile(self, query):
 
-        profiles = Profiles.objects.filter(Q(name__icontains=query) |
-                                           Q(contact__email__icontains=query) |
-                                           Q(contact__phone__icontains=query))
+        profiles = Profiles.objects.filter(Q(name__icontains=query))
+        
+        contact = Contact.objects.filter(Q(email__icontains = query)|Q(phone__icontains = query))
+        print(contact)
+
+        if(contact.len()>0):
+            for contact in contact:
+                profiles = contact.get(profiles)
 
         profiles = PaginationUtilities.paginate_results(profiles,
                                                         page_number=self.page,
