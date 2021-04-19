@@ -1,6 +1,9 @@
 import json
 from utility.pagination_utilities import PaginationUtilities
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, VendorSerializer
+from rest_framework import serializers
+from django.core.serializers import serialize
+from ..profiles.serializers import ProfileSerializer
 from .models import Products
 from ..profiles.models import Profiles
 from utility.exception_utilities import CustomException
@@ -26,6 +29,9 @@ class ProductService():
 
     def fetch_all_products(self) -> dict:
         products = Products.objects.all()  # .filter(is_deleted=False)
+        # vendorIds = Products.objects.values('vendorId')
+        # vendorIds_dict = serialize(vendorIds).data
+        # print(type(vendorIds_dict))
 
         products = PaginationUtilities.paginate_results(products,
                                                         page_number=self.page,
@@ -43,27 +49,29 @@ class ProductService():
     def fetch_product_by_id(self) -> dict:
         product = Products.get_object_or_raise_exception(self.get_product_id())
 
+        vendor__id = Products.objects.filter(pk=self.get_product_id())[:1].values('vendorId')
+        vendor_data = ProfileSerializer(ProductsHelper.fetch_vendor(vendor__id)).data 
+
         product_data = ProductSerializer(product)
 
         response = {
             'success': True,
-            'product': product_data.data
+            'product': {
+                "product_details" : product_data.data,
+                "vendor_details" : vendor_data,
+            }
         }
 
         return response
 
     def create_product(self, data) -> dict:
 
-        if 'vendor_id' not in data:
+        if 'vendorId' not in data:
             response = {
                 'success': False,
                 'error_detail': 'Send vendor id in body'
             }
             raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
-
-        data['vendor'] = ProductsHelper.fetch_vendor(data.pop('vendor_id'))
-
-        data['timings'] = json.dumps(data['timings'])
 
         Products(**data).save()
 

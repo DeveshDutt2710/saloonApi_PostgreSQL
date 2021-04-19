@@ -29,11 +29,11 @@ class OrderService():
     def _create_contact_details(self, contact_details):
         return Contact.create_contact(**contact_details)
 
-    def _create_payment(self, payment_details):
-        return Payments.create_payments(payment_details)
+    def _create_payment(self, payment_details, order):
+        return Payments.create_payments(order = order ,**payment_details)
 
     def _save_order(self, profile):
-        profile.save()
+        return profile.save()
 
     def _update_order_details(self, order, data):
 
@@ -75,45 +75,52 @@ class OrderService():
 
     def create_order(self, data) -> dict:
 
-        if 'vendor' not in data:
+        if 'vendor_id' not in data:
             response = {
                 'success': False,
                 'error_detail': 'Send vendor id in body'
             }
             raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
 
-        if 'customer' not in data:
+        if 'customer_id' not in data:
             response = {
                 'success': False,
                 'error_detail': 'Send customer id in body'
             }
             raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
 
-        if 'product' not in data:
+        if 'product_id' not in data:
             response = {
                 'success': False,
                 'error_detail': 'Send product id in body'
             }
             raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
 
-        data['product'] = OrderUtilities.fetch_product(data.pop('product'))
-        data['vendor'] = OrderUtilities.fetch_profile(data.pop('vendor'))
-        data['customer'] = OrderUtilities.fetch_profile(data.pop('customer'))
+        try:
+            data['product'] = OrderUtilities.fetch_product(data.pop('product_id'))
+            data['vendor'] = OrderUtilities.fetch_profile(data.pop('vendor_id'))
+            data['customer'] = OrderUtilities.fetch_profile(data.pop('customer_id'))
+        except BaseException as e :
+            return e.detail
+        
 
-        if 'contact' in data:
-            contact = self._create_contact_details(data.pop('contact'))
-            data['contact'] = contact
+
+        saved_order = None
+
+      
 
         if 'payment' in data:
-            privacy_setting = self._create_payment(data.pop('payment'))
-            data['payment'] = privacy_setting
+            payment_details = data.pop('payment')
+            saved_order = self._save_order(Orders(**data))
+            privacy_setting = self._create_payment(payment_details, saved_order)
+            # data['payment'] = privacy_setting
 
-        data['time'] = json.dumps(data['time'])
 
-        self._save_order(Orders(**data))
+        
 
         response = {
             'success': True,
+            'order_id' : saved_order.id
         }
 
         return response

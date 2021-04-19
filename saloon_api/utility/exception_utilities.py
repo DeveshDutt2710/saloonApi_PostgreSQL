@@ -4,8 +4,12 @@ from rest_framework import status as status_codes
 
 class BaseException(APIException):
     status_code = status_codes.HTTP_400_BAD_REQUEST
+    error_code = 101
     default_code = 'bad  request'
-    default_detail = 'Service temporarily unavailable, try again later.'
+    detail = {
+        "success" : False,
+        "error_detail" : 'Service temporarily unavailable, try again later.' 
+    }
 
     def __init__(self, detail=None, status_code=None):
         if detail is not None:
@@ -16,41 +20,41 @@ class BaseException(APIException):
 
 class CustomException(BaseException):
     detail = {"success": False,
-              "error_message": "Something went wrong"
+              "error_detail": "Something went wrong"
               }
 
 
 class InvalidHeaderException(BaseException):
     detail = {"success": False,
-              "error_message": "send member id in headers"
+              "error_detail": "send member id in headers"
               }
 
 
 class InvalidProfileException(BaseException):
     detail = {"success": False,
-              "error_message": "Profile does not exist"
+              "error_detail": "Profile does not exist"
               }
 
 
 class InvalidAccountException(BaseException):
     detail = {"success": False,
-              "error_message": "Account does not exist"
+              "error_detail": "Account does not exist"
               }
 
 
 class InvalidOrderException(BaseException):
     detail = {"success": False,
-              "error_message": "Order does not exist"
+              "error_detail": "Order does not exist"
               }
 
 
 class InvalidProductException(BaseException):
     detail = {"success": False,
-              "error_message": "Product does not exist"
+              "error_detail": "Product does not exist"
               }
 
 
 class InvalidEnquiryException(BaseException):
     detail = {"success": False,
-              "error_message": "Enquiry does not exist"
+              "error_detail": "Enquiry does not exist"
               }

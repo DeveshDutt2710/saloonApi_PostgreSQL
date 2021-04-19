@@ -36,6 +36,10 @@ class ContactSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class VendorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profiles
+        fields = ('name', 'vendor_description')
 
 class ProfileSerializer(serializers.ModelSerializer):
     profile_contacts_rn = ContactSerializer(many=True, read_only=True)

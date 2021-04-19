@@ -3,6 +3,7 @@ from utility.exception_utilities import *
 from utility.time_utilities import TimeUtilities
 from datetime import datetime
 from django.db import models
+# from ..products.models import Products
 import uuid
 
 
@@ -79,6 +80,8 @@ class Profiles(models.Model):
     #account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True)
     profile_type = models.CharField(choices=PROFILE_TYPE, max_length=1024, default=PROFILE_TYPE_CUSTOMER)
 
+    # vendor_product = models.ForeignKey(Product,on_delete=models.CASCADE,default = 1, related_name='product_vendor_rn', null=True)
+
     vendor_description = models.TextField(null=True)
     '''
     ONE TO ONE FIELD:
@@ -126,7 +129,7 @@ class Profiles(models.Model):
         except Profiles.DoesNotExist:
             response = {
                 'success': False,
-                'detail': f'Profile with id {profile_id} does not exist'
+                'error_detail': f'Profile with id {profile_id} does not exist'
             }
             raise InvalidProfileException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
 

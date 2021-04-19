@@ -2,12 +2,16 @@ from ..model_choices import *
 from utility.exception_utilities import *
 from utility.time_utilities import TimeUtilities
 from datetime import datetime
+from jsonfield import JSONField
 from ..profiles.models import Profiles
 from django.db import models
 
 
+
+
+
 class Products(models.Model):
-    vendor = models.ForeignKey(Profiles, on_delete=models.CASCADE, null=True)
+    vendorId = models.IntegerField()
     name = models.TextField()
     description = models.TextField()
     price = models.IntegerField()
@@ -31,9 +35,9 @@ class Products(models.Model):
         except Products.DoesNotExist:
             response = {
                 'success': False,
-                'detail': f'Product with id {product_id} does not exist'
+                'error_detail': f'Product with id {product_id} does not exist'
             }
-            raise InvalidProfileException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
+            raise InvalidProductException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def get_object_or_none(product_id):
