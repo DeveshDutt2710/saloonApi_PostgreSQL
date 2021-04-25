@@ -49,34 +49,31 @@ class ProductService():
     def fetch_product_by_id(self) -> dict:
         product = Products.get_object_or_raise_exception(self.get_product_id())
 
-        vendor__id = Products.objects.filter(pk=self.get_product_id())[:1].values('vendorId')
-        vendor_data = ProfileSerializer(ProductsHelper.fetch_vendor(vendor__id)).data 
-
         product_data = ProductSerializer(product)
 
         response = {
             'success': True,
-            'product': {
-                "product_details" : product_data.data,
-                "vendor_details" : vendor_data,
-            }
+            'product': product_data.data
         }
 
         return response
 
     def create_product(self, data) -> dict:
 
-        if 'vendorId' not in data:
+        if 'vendor_id' not in data:
             response = {
                 'success': False,
-                'error_detail': 'Send vendor id in body'
+                'error_detail': 'Send vendor_id in body'
             }
             raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
 
-        Products(**data).save()
+        data['vendor'] = ProductsHelper.fetch_vendor(data.pop('vendor_id'))
+
+        saved_product_id = Products(**data).save()
 
         response = {
             'success': True,
+            'product_id' : saved_product_id
         }
 
         return response

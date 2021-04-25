@@ -11,7 +11,7 @@ from django.db import models
 
 
 class Products(models.Model):
-    vendorId = models.IntegerField()
+    vendor = models.ForeignKey(Profiles, on_delete=models.CASCADE,related_name='product_vendor_rn' ,null=True)
     name = models.TextField()
     description = models.TextField()
     price = models.IntegerField()
@@ -60,3 +60,4 @@ class Products(models.Model):
         self.updated_at = current_time
 
         super(Products, self).save(*args, **kwargs)
+        return self.id

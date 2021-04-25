@@ -5,13 +5,6 @@ from rest_framework import serializers
 from .models import Profiles, Address, Contact, PrivacySettings
 
 
-class BasicProfileSerializer(serializers.ModelSerializer):
-    email = serializers.ReadOnlyField(source='contact.email')
-    phone = serializers.ReadOnlyField(source='contact.phone')
-
-    class Meta:
-        model = Profiles
-        fields = ('id', 'name', 'email', 'phone')
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -42,14 +35,14 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = ('name', 'vendor_description')
 
 class ProfileSerializer(serializers.ModelSerializer):
-    profile_contacts_rn = ContactSerializer(many=True, read_only=True)
+    profile_contacts = ContactSerializer(many=True, read_only=True)
     #address = AddressSerializer()
     
     #privacy_setting = PrivacySettingsSerializer()
 
     class Meta:
         model = Profiles
-        fields = '__all__'
+        fields = ['name','profile_contacts','profile_type','vendor_description','privacy_setting','dob','gender','image','last_app_activity','created_at','updated_at','is_deleted','is_admin_verified',]
 
     # def to_representation(self, profile):
     #     data = super(ProfileSerializer, self).to_representation(profile)
@@ -61,4 +54,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     #     return data
 
+class BasicProfileSerializer(serializers.ModelSerializer):
+    profile_contacts = ContactSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Profiles
+        fields = ('id', 'name', 'profile_contacts')
 

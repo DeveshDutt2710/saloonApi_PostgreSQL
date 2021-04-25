@@ -10,12 +10,18 @@ from ..products.models import Products
 class Orders(models.Model):
     #create new table ordered_products map order_id to product_id, manytomany relationship
     product = models.ForeignKey(Products, on_delete=models.CASCADE,related_name='order_product_rn' ,null=True)
+    #assuming one order has only one product but if one order has multiple products, product type
+    #create a new class product type and have one to one mapping with product
+    #in this case create another table for many to many
     vendor = models.ForeignKey(Profiles, on_delete=models.CASCADE, related_name='order_vendor_rn', null=True)
     customer = models.ForeignKey(Profiles, on_delete=models.CASCADE, related_name='order_customer_rn', null=True)
 
-    #use Foreignkey for product, vendor, customer ids
+    #use Foreignkey for product, vendor, customer ids, quantity
     #implement onetoone relationship
     order_status = models.CharField(choices=ORDER_STATUS, max_length=1024, default=ORDER_STATUS_UPCOMING)
+
+    
+
 
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()

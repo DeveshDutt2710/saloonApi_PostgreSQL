@@ -16,11 +16,11 @@ class BasicProductSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
 
-    
 
     class Meta:
         model = Products
         fields = '__all__'
+        depth = 3
 
     # def to_representation(self, profile):
     #     data = super(ProductSerializer, self).to_representation(profile)

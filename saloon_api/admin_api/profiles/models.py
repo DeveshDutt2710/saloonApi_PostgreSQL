@@ -88,6 +88,7 @@ class Profiles(models.Model):
     this is similar to a ForeignKey with unique=True, 
     but the "reverse" side of the relation will directly return a single object.    
     '''
+    
     #contact = models.ForeignKey(Contact, on_delete=models.CASCADE, related_name='profile_contact_details')
 
     #address = models.OneToOneField(Address, on_delete=models.CASCADE, related_name='profile_address_details', null=True)
@@ -165,7 +166,7 @@ class Contact(models.Model):
     #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone = models.BigIntegerField()
     email = models.EmailField()
-    profile=models.ForeignKey(Profiles,on_delete=models.CASCADE,default = 1, related_name='profile_contacts_rn')
+    profile=models.ForeignKey(Profiles,on_delete=models.CASCADE,default = 1, related_name='profile_contacts')
 
     @staticmethod
     def create_contact(profile, email, phone):

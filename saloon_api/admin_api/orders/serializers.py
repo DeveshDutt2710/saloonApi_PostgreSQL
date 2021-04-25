@@ -15,13 +15,14 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     orders_payments_rn = PaymentSerializer(many = True, read_only = True)
-    order_product_rn = ProductSerializer(many = True, read_only = True)
-    order_vendor_rn = ProfileSerializer(many = True, read_only = True)
-    order_customer_rn = ProfileSerializer(many = True, read_only = True)
+    # order_product_rn = ProductSerializer(many = True, read_only = True)
+    # order_vendor_rn = ProfileSerializer(many = True, read_only = True)
+    # order_customer_rn = ProfileSerializer(many = True, read_only = True)
 
     class Meta:
         model = Orders
-        fields = '__all__'
+        fields = ['product','vendor','customer','orders_payments_rn']
+        depth = 2
 
     # def to_representation(self, order):
     #     data = super(OrderSerializer, self).to_representation(order)
