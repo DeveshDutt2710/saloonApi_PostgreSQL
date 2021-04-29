@@ -61,13 +61,13 @@ class DeleteProfileView(TransactionMixin, APIView):
 
 class SearchProfileView(APIView):
 
-    def post(self, request, query, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         query_params = request.query_params
 
         page_no = query_params.get('page', 1)
         page_size = query_params.get("page_size", 10)
 
         profile_manager = ProfileService(page=page_no, page_size=page_size)
-        response = profile_manager.search_profile(query)
+        response = profile_manager.search_profile(request.data)
 
         return JsonResponse(response, status=status_codes.HTTP_200_OK)

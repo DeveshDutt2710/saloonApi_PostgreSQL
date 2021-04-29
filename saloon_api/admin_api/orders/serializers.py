@@ -21,8 +21,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Orders
-        fields = ['product','vendor','customer','orders_payments_rn']
-        depth = 2
+        fields = '__all__'
+        depth = 3
 
     # def to_representation(self, order):
     #     data = super(OrderSerializer, self).to_representation(order)

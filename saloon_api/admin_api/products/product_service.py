@@ -67,6 +67,13 @@ class ProductService():
             }
             raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
 
+        if 'product_category' not in data:
+            response = {
+                'success': False,
+                'error_detail': 'Send product_category in body'
+            }
+            raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
+
         data['vendor'] = ProductsHelper.fetch_vendor(data.pop('vendor_id'))
 
         saved_product_id = Products(**data).save()
@@ -102,9 +109,37 @@ class ProductService():
 
         return response
 
-    def search_product(self, query):
+    def search_product(self, data):
 
-        products = Products.objects.filter(name__icontains=query)
+        products = Products.objects.all()
+       
+        print(data)
+        if 'vendor_id' in data:
+            products = products.filter(vendor__id = data['vendor_id'])
+        if 'id' in data:
+            products = products.filter(id = data['id'])
+        if 'name' in data:
+            products = products.filter(name = data['name'])
+        if 'description' in data:
+            products = products.filter(description = data['description'])
+        if 'price' in data:
+            products = products.filter(price = data['price'])
+        if 'sales' in data:
+            products = products.filter(sales = data['sales'])
+        if 'timings' in data:
+            products = products.filter(timings = data['timings'])
+        if 'product_availability' in data:
+            products = products.filter(product_availability = data['product_availability'])
+        if 'rating' in data:
+            products = products.filter(rating = data['rating'])
+        if 'product_type' in data:
+            products = products.filter(product_type = data['product_type'])
+        if 'product_category' in data:
+            products = products.filter(product_category = data['product_category'])
+        
+        
+        
+
 
         products = PaginationUtilities.paginate_results(products,
                                                         page_number=self.page,

@@ -26,7 +26,7 @@ class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = '__all__'
+        fields = ['id','phone','email']
 
 
 class VendorSerializer(serializers.ModelSerializer):
@@ -42,7 +42,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profiles
-        fields = ['name','profile_contacts','profile_type','vendor_description','privacy_setting','dob','gender','image','last_app_activity','created_at','updated_at','is_deleted','is_admin_verified',]
+        fields = ['id','name','profile_contacts','profile_type','vendor_description','privacy_setting','dob','gender','image','last_app_activity','created_at','updated_at','is_deleted','is_admin_verified',]
 
     # def to_representation(self, profile):
     #     data = super(ProfileSerializer, self).to_representation(profile)

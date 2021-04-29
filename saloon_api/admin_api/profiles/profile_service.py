@@ -143,14 +143,16 @@ class ProfileService():
 
         return response
 
-    def search_profile(self, query):
+    def search_profile(self, data):
 
-        profiles = Profiles.objects.filter(Q(name__icontains=query))
+        profiles = Profiles.objects.all()
+        if 'name' in data:
+            profiles = profiles.filter(name = data['name'])
+        if 'email' in data:
+            profiles = profiles.filter(profile_contacts__email = data['email'])
+        if 'phone' in data:
+            profiles = profiles.filter(profile_contacts__phone = data['phone'])
         
-        contact = Contact.objects.filter(Q(email__icontains = query)|Q(phone__icontains = query))
-        print(contact)
-        
-        profiles = Profiles.objects.contact.filter(Q(email__icontains = query)|Q(phone__icontains = query))
         profiles = PaginationUtilities.paginate_results(profiles,
                                                         page_number=self.page,
                                                         page_size=self.page_size)

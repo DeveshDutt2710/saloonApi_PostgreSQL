@@ -22,6 +22,7 @@ class Products(models.Model):
     rating = models.IntegerField(default=5)
 
     product_type = models.CharField(choices=PRODUCT_TYPES, max_length=1024, default=PRODUCT_TYPE_PRODUCT)
+    product_category = models.CharField(choices=PRODUCT_CATEGORIES, max_length=1024)
 
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
