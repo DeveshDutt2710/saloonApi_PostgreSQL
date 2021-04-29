@@ -93,7 +93,7 @@ class ProfileService():
             print("\nCONTACTS : "+(str)(contacts))
             saved_profile = self._save_profile(Profiles(**data))
             for contact in contacts:
-                contact = self._create_user_contact_details(contact, profile = saved_profile)
+                self._create_user_contact_details(contact, profile = saved_profile)
             
         # if 'address' in data:
         #     address = self._create_user_address_details(data.pop('address'))
@@ -146,12 +146,10 @@ class ProfileService():
     def search_profile(self, data):
 
         profiles = Profiles.objects.all()
-        if 'name' in data:
-            profiles = profiles.filter(name = data['name'])
-        if 'email' in data:
-            profiles = profiles.filter(profile_contacts__email = data['email'])
-        if 'phone' in data:
-            profiles = profiles.filter(profile_contacts__phone = data['phone'])
+        profiles = Profiles.objects.filter(Q(name__icontains = data['query'])
+                                    |Q(profile_contacts__email__icontains = data['query'])
+                                    |Q(profile_contacts__phone__icontains = data['query']))
+
         
         profiles = PaginationUtilities.paginate_results(profiles,
                                                         page_number=self.page,

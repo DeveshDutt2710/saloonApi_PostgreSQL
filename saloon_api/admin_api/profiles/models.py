@@ -94,7 +94,10 @@ class Profiles(models.Model):
     #address = models.OneToOneField(Address, on_delete=models.CASCADE, related_name='profile_address_details', null=True)
 
     privacy_setting = models.OneToOneField(PrivacySettings, on_delete=models.CASCADE, null=True)
-
+    #gender validation throw error if other than male female
+    #profile type / category throw error if 
+    #no contact overlap for profiles and handle error
+    #phone number 10 digits
     dob = models.DateTimeField()
 
     gender = models.CharField(max_length=10)
@@ -107,6 +110,9 @@ class Profiles(models.Model):
 
     is_deleted = models.BooleanField(default=False)
     is_admin_verified = models.BooleanField(default=False)
+
+    # class Meta:
+
 
     
 
@@ -164,8 +170,8 @@ class Profiles(models.Model):
 
 class Contact(models.Model):
     #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    phone = models.BigIntegerField()
-    email = models.EmailField()
+    phone = models.BigIntegerField(unique = True)
+    email = models.EmailField(unique = True)
     profile=models.ForeignKey(Profiles,on_delete=models.CASCADE,default = 1, related_name='profile_contacts')
 
     @staticmethod
