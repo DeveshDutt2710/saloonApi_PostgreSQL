@@ -3,6 +3,9 @@ from utility.pagination_utilities import PaginationUtilities
 from .serializers import ProfileSerializer
 from ..serializers import BsonSerializer
 from .models import Profiles, Contact, Address, PrivacySettings
+from utility.exception_utilities import CustomException
+from rest_framework import status as status_codes
+
 
 class ProfileService():
     profile_id = None
@@ -91,9 +94,18 @@ class ProfileService():
             contacts = data.pop('contact')
             print(type(contacts))
             print("\nCONTACTS : "+(str)(contacts))
-            saved_profile = self._save_profile(Profiles(**data))
             for contact in contacts:
-                self._create_user_contact_details(contact, profile = saved_profile)
+                saved_profile = self._save_profile(Profiles(**data))
+                self._create_user_contact_details(contact, profile = saved_profile) 
+                # if contact['phone'] > 9999999999:
+                #     response = {
+                #         "success" : False,
+                #         "error_detail" : "phone number should be less than 10 digits"
+                #     }
+                #     raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
+                # else:
+                    
+                    
             
         # if 'address' in data:
         #     address = self._create_user_address_details(data.pop('address'))

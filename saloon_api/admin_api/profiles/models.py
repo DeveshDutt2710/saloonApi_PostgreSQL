@@ -3,9 +3,10 @@ from utility.exception_utilities import *
 from utility.time_utilities import TimeUtilities
 from datetime import datetime
 from django.db import models
-# from ..products.models import Products
-import uuid
-
+from django.core.validators import MaxValueValidator
+from utility.utilities import ModelChoicesUtilities
+from django.core.exceptions import ValidationError
+import re
 
 '''
 MODEL META CLASS: 
@@ -78,7 +79,7 @@ class Profiles(models.Model):
     #ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, null=False)
     #account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True)
-    profile_type = models.CharField(choices=PROFILE_TYPE, max_length=1024, default=PROFILE_TYPE_CUSTOMER)
+    profile_type = models.CharField(choices=PROFILE_TYPE, max_length=1024,validators = [ModelChoicesUtilities.profile_type_validator], default=PROFILE_TYPE_CUSTOMER)
 
     # vendor_product = models.ForeignKey(Product,on_delete=models.CASCADE,default = 1, related_name='product_vendor_rn', null=True)
 
@@ -97,10 +98,11 @@ class Profiles(models.Model):
     #gender validation throw error if other than male female
     #profile type / category throw error if 
     #no contact overlap for profiles and handle error
+    #filter
     #phone number 10 digits
     dob = models.DateTimeField()
 
-    gender = models.CharField(max_length=10)
+    gender = models.CharField(choices=PROFILE_GENDER,max_length=10, validators=[ModelChoicesUtilities.profile_gender_validator], default=PROFILE_GENDER_MALE)
     image = models.URLField(max_length=1000)
 
     last_app_activity = models.DateTimeField()
@@ -166,18 +168,32 @@ class Profiles(models.Model):
         print("profile id "+(str)(self.id))
         return self
 
-
+def validate_profile_contact_pattern(value):
+    phone_regex ="^\+?(91-)?\d{10}$"
+    X = re.findall(phone_regex, (str)(value))
+    if X:
+        return value 
+    else:
+        raise ValidationError("phone number field must be a 10 digit number and must start with a country code")
+        
+  
 
 class Contact(models.Model):
     #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    phone = models.BigIntegerField(unique = True)
+    phone = models.BigIntegerField(unique = True, validators=[validate_profile_contact_pattern])
     email = models.EmailField(unique = True)
     profile=models.ForeignKey(Profiles,on_delete=models.CASCADE,default = 1, related_name='profile_contacts')
+    #created at and updated at field
 
     @staticmethod
     def create_contact(profile, email, phone):
         contact = Contact(email=email, phone=phone, profile = profile)
-        contact.save()
+        try:
+            contact.full_clean()
+        except:
+            raise ValidationError("full clean error in contact")
+        else:
+            contact.save()
 
         return contact
 
@@ -185,3 +201,5 @@ class Contact(models.Model):
         self.phone = data.get('phone', self.phone)
         self.email = data.get('email', self.email)
         self.save()
+
+# ^\+?(91-)?\d{10}$

@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import status as status_codes
 from django.http import JsonResponse
 from .product_service import ProductService
-from ..mixins import TransactionMixin
+# from ..mixins import TransactionMixin
 
 
 class AllProductsView(APIView):
@@ -29,7 +29,7 @@ class GetProductView(APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class CreateProductView(TransactionMixin, APIView):
+class CreateProductView(APIView):
 
     def post(self, request, *args, **kwargs):
 
@@ -39,7 +39,7 @@ class CreateProductView(TransactionMixin, APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class UpdateProductView(TransactionMixin, APIView):
+class UpdateProductView(APIView):
 
     def post(self, request, product_id, *args, **kwargs):
 
@@ -49,7 +49,7 @@ class UpdateProductView(TransactionMixin, APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class DeleteProductView(TransactionMixin, APIView):
+class DeleteProductView(APIView):
 
     def post(self, request, product_id, *args, **kwargs):
 

@@ -1,7 +1,7 @@
 import json
 from django.db.models import Q
 from rest_framework import status as status_codes
-from utility.exception_utilities import CustomException
+from utility.exception_utilities import *
 from utility.pagination_utilities import PaginationUtilities
 from .serializers import OrderSerializer
 from .models import Orders, Payments
@@ -101,7 +101,8 @@ class OrderService():
             data['vendor'] = OrderUtilities.fetch_profile(data.pop('vendor_id'))
             data['customer'] = OrderUtilities.fetch_profile(data.pop('customer_id'))
         except BaseException as e :
-            return e.detail
+            raise CustomException(e.detail, status_code=status_codes.HTTP_400_BAD_REQUEST)
+            #CustomException(e.detail, status_code=status_codes.HTTP_400_BAD_REQUEST)
         
 
 

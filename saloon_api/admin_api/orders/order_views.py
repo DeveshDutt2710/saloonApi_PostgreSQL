@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import status as status_codes
 from django.http import JsonResponse
 from .order_service import OrderService
-from ..mixins import TransactionMixin
+# from ..mixins import TransactionMixin
 
 
 class AllOrdersView(APIView):
@@ -29,7 +29,7 @@ class GetOrderView(APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class CreateOrderView(TransactionMixin, APIView):
+class CreateOrderView(APIView):
 
     def post(self, request, *args, **kwargs):
 
@@ -39,7 +39,7 @@ class CreateOrderView(TransactionMixin, APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class UpdateOrderView(TransactionMixin, APIView):
+class UpdateOrderView(APIView):
 
     def post(self, request, order_id, *args, **kwargs):
 
@@ -49,7 +49,7 @@ class UpdateOrderView(TransactionMixin, APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class DeleteOrderView(TransactionMixin, APIView):
+class DeleteOrderView(APIView):
 
     def post(self, request, order_id, *args, **kwargs):
 

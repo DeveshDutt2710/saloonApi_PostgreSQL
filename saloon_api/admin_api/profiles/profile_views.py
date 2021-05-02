@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import status as status_codes
 from django.http import JsonResponse
 from .profile_service import ProfileService
-from ..mixins import TransactionMixin
+# from ..mixins import TransactionMixin
 
 
 class AllProfileView(APIView):
@@ -29,7 +29,7 @@ class GetProfileView(APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class CreateProfileView(TransactionMixin, APIView):
+class CreateProfileView(APIView):
 
     def post(self, request, *args, **kwargs):
 
@@ -39,7 +39,7 @@ class CreateProfileView(TransactionMixin, APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class UpdateProfileView(TransactionMixin, APIView):
+class UpdateProfileView(APIView):
 
     def post(self, request, profile_id, *args, **kwargs):
 
@@ -49,7 +49,7 @@ class UpdateProfileView(TransactionMixin, APIView):
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
 
 
-class DeleteProfileView(TransactionMixin, APIView):
+class DeleteProfileView(APIView):
 
     def post(self, request, profile_id, *args, **kwargs):
 
