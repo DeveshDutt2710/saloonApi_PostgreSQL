@@ -7,4 +7,6 @@ saloon_api/saloon_api/__pycache__/
 saloon_api/settings/__pycache__/
 saloon_api/utility/__pycache__/
 
+*/migrations/
+*/__pycache__/
 .idea/
