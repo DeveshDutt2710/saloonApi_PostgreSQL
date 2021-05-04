@@ -3,6 +3,7 @@ from utility.pagination_utilities import PaginationUtilities
 from .serializers import ProfileSerializer
 from ..serializers import BsonSerializer
 from .models import Profiles, Contact, Address, PrivacySettings
+from django.core.exceptions import ValidationError
 from utility.exception_utilities import CustomException
 from rest_framework import status as status_codes
 
@@ -34,6 +35,11 @@ class ProfileService():
 
 
     def _save_profile(self, profile):
+        # try:
+        #     profile.full_clean()
+        # except:
+        #     raise ValidationError("full clean error in profiles")
+        
         saved_profile = profile.save()
         return saved_profile
         
@@ -86,9 +92,6 @@ class ProfileService():
 
     def create_profile(self, data) -> dict:
         saved_profile = None
-
-        #print(type(saved_profile))
-
         
         if 'contact' in data:
             contacts = data.pop('contact')
@@ -97,24 +100,7 @@ class ProfileService():
             for contact in contacts:
                 saved_profile = self._save_profile(Profiles(**data))
                 self._create_user_contact_details(contact, profile = saved_profile) 
-                # if contact['phone'] > 9999999999:
-                #     response = {
-                #         "success" : False,
-                #         "error_detail" : "phone number should be less than 10 digits"
-                #     }
-                #     raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
-                # else:
-                    
-                    
-            
-        # if 'address' in data:
-        #     address = self._create_user_address_details(data.pop('address'))
-        #     data['address'] = address
-
-        # if 'privacy_setting' in data:
-        #     privacy_setting = self._create_user_privacy_settings(data.pop('privacy_setting'))
-        #     data['privacy_setting'] = privacy_setting
-
+                
         
         response = {
             'success': True,

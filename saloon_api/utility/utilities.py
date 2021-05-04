@@ -15,43 +15,49 @@ class Utilities:
 class ModelChoicesUtilities:
 
     def profile_type_validator(value):
-        if value not in [x[1] for x in PROFILE_TYPE]:
-            raise ValidationError(
-                _('%(value)s is not in the choices list'),
-                params={'value': value},
-            )
+        list = [x[1] for x in PROFILE_TYPE]
+        if value in list:
+            pass
+        else:
+            raise ValidationError("PROFILE_TYPE must be from the list : "+(str)(list)+", in order to process correctly")
+        
+        
     
     def product_type_validator(value):
-        if value not in [x[1] for x in PRODUCT_TYPES]:
-            raise ValidationError(
-                _('%(value)s is not in the choices list'),
-                params={'value': value},
-            )
+        list = [x[1] for x in PRODUCT_TYPES]
+        if value in list:
+            pass
+        else:
+            raise ValidationError("PRODUCT_TYPES must be from the list \n {list} \n in order to process correctly")
+        
     
     def product_category_validator(value):
-        if value not in [x[1] for x in PRODUCT_CATEGORIES]:
-            raise ValidationError(
-                _('%(value)s is not in the choices list'),
-                params={'value': value},
-            )
+        list = [x[1] for x in PRODUCT_CATEGORIES]
+        if value in list:
+            pass
+        else:
+            raise ValidationError("PRODUCT_CATEGORIES must be from the list \n {list} \n in order to process correctly")
         
     def profile_gender_validator(value):
-        if value not in [x[1] for x in PROFILE_GENDER]:
-            raise ValidationError(
-                _('%(value)s is not in the choices list'),
-                params={'value': value},
-            )
+        list = [x[1] for x in PROFILE_GENDER]
+        if value in list:
+            pass
+        else:
+            raise ValidationError("PROFILE_GENDER must be from the list \n {list} \n in order to process correctly")
+    
         
     def order_status_validator(value):
-        if value not in [x[1] for x in ORDER_STATUS]:
-            raise ValidationError(
-                _('%(value)s is not in the choices list'),
-                params={'value': value},
-            )
-    
+        list = [x[1] for x in ORDER_STATUS]
+        if value in list:
+            pass
+        else:
+            raise ValidationError("ORDER_STATUS must be from the list \n {list} \n in order to process correctly")
+     
     def order_payments_validator(value):
-        if value not in [x[1] for x in PAYMENT_STATUS]:
-            raise ValidationError(
-                _('%(value)s is not in the choices list'),
-                params={'value': value},
-            )
+        list = [x[1] for x in PAYMENT_STATUS]
+        if value in list:
+            pass
+        else:
+            raise ValidationError("PAYMENT_STATUS must be from the list \n {list} \n in order to process correctly")
+        
+   

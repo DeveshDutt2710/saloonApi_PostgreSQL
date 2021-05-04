@@ -79,7 +79,7 @@ class Profiles(models.Model):
     #ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, null=False)
     #account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True)
-    profile_type = models.CharField(choices=PROFILE_TYPE, max_length=1024,validators = [ModelChoicesUtilities.profile_type_validator], default=PROFILE_TYPE_CUSTOMER)
+    profile_type = models.CharField(choices=PROFILE_TYPE, max_length=1024, default=PROFILE_TYPE_CUSTOMER)
 
     # vendor_product = models.ForeignKey(Product,on_delete=models.CASCADE,default = 1, related_name='product_vendor_rn', null=True)
 
@@ -94,21 +94,21 @@ class Profiles(models.Model):
 
     #address = models.OneToOneField(Address, on_delete=models.CASCADE, related_name='profile_address_details', null=True)
 
-    privacy_setting = models.OneToOneField(PrivacySettings, on_delete=models.CASCADE, null=True)
+    privacy_setting = models.OneToOneField(PrivacySettings, on_delete=models.CASCADE,blank = True, null=True)
     #gender validation throw error if other than male female
     #profile type / category throw error if 
     #no contact overlap for profiles and handle error
     #filter
     #phone number 10 digits
-    dob = models.DateTimeField()
+    dob = models.DateTimeField(blank = True)
 
-    gender = models.CharField(choices=PROFILE_GENDER,max_length=10, validators=[ModelChoicesUtilities.profile_gender_validator], default=PROFILE_GENDER_MALE)
-    image = models.URLField(max_length=1000)
+    gender = models.CharField(choices=PROFILE_GENDER,max_length=10, default=PROFILE_GENDER_MALE)
+    image = models.URLField(max_length=1000, blank = True)
 
-    last_app_activity = models.DateTimeField()
+    last_app_activity = models.DateTimeField(blank = True)
 
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    created_at = models.DateTimeField(blank = True)
+    updated_at = models.DateTimeField(blank = True)
 
     is_deleted = models.BooleanField(default=False)
     is_admin_verified = models.BooleanField(default=False)
@@ -152,6 +152,9 @@ class Profiles(models.Model):
     def delete_profile(self):
         self.is_deleted = True
         self.save()
+    
+    def clean(self):
+        ModelChoicesUtilities.profile_type_validator(self.profile_type)
 
     def save(self, *args, **kwargs):
 
@@ -163,6 +166,10 @@ class Profiles(models.Model):
         self.updated_at = current_time
         self.last_app_activity=current_time
 
+        try:
+            self.full_clean()
+        except:
+            raise ValidationError("full clean error in profiles")
 
         super(Profiles, self).save(*args, **kwargs)
         print("profile id "+(str)(self.id))
