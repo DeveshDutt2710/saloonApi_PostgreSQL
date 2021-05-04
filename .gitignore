@@ -1,3 +1,10 @@
-*/migrations/
-*/__pycache__/
+saloon_api/admin_api/migrations/
+saloon_api/admin_api/__pycache__/
+saloon_api/admin_api/orders/__pycache__/
+saloon_api/admin_api/profiles/__pycache__/
+saloon_api/admin_api/products/__pycache__/
+saloon_api/saloon_api/__pycache__/
+saloon_api/settings/__pycache__/
+saloon_api/utility/__pycache__/
+
 .idea/
