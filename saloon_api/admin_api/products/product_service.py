@@ -8,6 +8,7 @@ from .models import Products
 from ..profiles.models import Profiles
 from utility.exception_utilities import CustomException
 from rest_framework import status as status_codes
+from django.db.models import Q
 
 
 class ProductService():
@@ -112,33 +113,27 @@ class ProductService():
     def search_product(self, data):
 
         products = Products.objects.all()
-       
         print(data)
-        if 'vendor_id' in data:
-            products = products.filter(vendor__id = data['vendor_id'])
-        if 'id' in data:
-            products = products.filter(id = data['id'])
-        if 'name' in data:
-            products = products.filter(name = data['name'])
-        if 'description' in data:
-            products = products.filter(description = data['description'])
+
+        if 'product_category' in data:
+            products = products.filter(product_category = data['product_category'])
+        if 'product_type' in data:
+            products = products.filter(product_type = data['product_type'])
         if 'price' in data:
-            products = products.filter(price = data['price'])
-        if 'sales' in data:
-            products = products.filter(sales = data['sales'])
-        if 'timings' in data:
-            products = products.filter(timings = data['timings'])
+            product_helper = Products.objects.none()
+            for price in data['price']:
+                product = products.filter(price__gte = price['min'], price__lte = price['max'])
+                product_helper |= product
+            products = product_helper
         if 'product_availability' in data:
             products = products.filter(product_availability = data['product_availability'])
         if 'rating' in data:
-            products = products.filter(rating = data['rating'])
-        if 'product_type' in data:
-            products = products.filter(product_type = data['product_type'])
-        if 'product_category' in data:
-            products = products.filter(product_category = data['product_category'])
-        
-        
-        
+            products = products.filter(rating >= data['rating'])
+
+        if 'query' in data:
+            products = products.filter(Q(name__icontains = data['query'])
+                                    |Q(vendor__name__icontains = data['query'])
+                                    |Q(description__icontains = data['query']))
 
 
         products = PaginationUtilities.paginate_results(products,

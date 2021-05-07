@@ -97,8 +97,9 @@ class ProfileService():
             contacts = data.pop('contact')
             print(type(contacts))
             print("\nCONTACTS : "+(str)(contacts))
+            saved_profile = self._save_profile(Profiles(**data))
             for contact in contacts:
-                saved_profile = self._save_profile(Profiles(**data))
+                # saved_profile = self._save_profile(Profiles(**data))
                 self._create_user_contact_details(contact, profile = saved_profile) 
                 
         
@@ -143,7 +144,6 @@ class ProfileService():
 
     def search_profile(self, data):
 
-        profiles = Profiles.objects.all()
         profiles = Profiles.objects.filter(Q(name__icontains = data['query'])
                                     |Q(profile_contacts__email__icontains = data['query'])
                                     |Q(profile_contacts__phone__icontains = data['query']))
