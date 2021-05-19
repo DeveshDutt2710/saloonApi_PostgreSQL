@@ -72,3 +72,18 @@ class SearchProductView(APIView):
         response = product_manager.search_product(request.data)
 
         return JsonResponse(response, status=status_codes.HTTP_200_OK)
+    
+
+class AutocorrectView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        query_params = request.query_params
+
+        page_no = query_params.get('page', 1)
+        page_size = query_params.get("page_size", 10)
+
+        product_manager = ProductService(page=page_no, page_size=page_size)
+        response = product_manager.autocorrect_query(request.data)
+
+        return JsonResponse(response, status=status_codes.HTTP_200_OK)

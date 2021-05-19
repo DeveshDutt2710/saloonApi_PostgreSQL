@@ -1,5 +1,6 @@
 import json
 from utility.pagination_utilities import PaginationUtilities
+from utility.similarity_distance import SimilarityDistance
 from .serializers import ProductSerializer, VendorSerializer
 from rest_framework import serializers
 from django.core.serializers import serialize
@@ -145,6 +146,27 @@ class ProductService():
         response = {
             'success': True,
             'products': product_data.data
+        }
+
+        return response
+    
+    def autocorrect_query(self, data):
+        profile_names = list(Profiles.objects.values_list('name', flat=True))
+        profile_email = list(Profiles.objects.values_list('profile_contacts__email', flat=True))
+        profile_phone = list(Profiles.objects.values_list('profile_contacts__phone', flat=True))
+        product_name = list(Products.objects.values_list('name', flat=True))
+        product_vendor_name = list(Products.objects.values_list('vendor__name', flat=True))
+        product_description = list(Products.objects.values_list('description', flat=True))
+        
+        keys = profile_names + profile_email + profile_phone + product_name + product_vendor_name + product_description
+        list_preferred = []
+        for key in keys:
+            if(SimilarityDistance.get_similarity_distance(data['query'], str(key),len(data['query']), len(str(key))) < 3):
+                list_preferred.append(str(key))
+
+        response = {
+            'success': True,
+            'suggestions' : list_preferred
         }
 
         return response

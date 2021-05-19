@@ -193,12 +193,18 @@ class Contact(models.Model):
     #created at and updated at field
 
     @staticmethod
-    def create_contact(profile, email, phone):
+    def create_contact(profile, email, phone, index):
         contact = Contact(email=email, phone=phone, profile = profile)
         try:
             contact.full_clean()
         except:
-            raise ValidationError("full clean error in contact")
+            if(index == 0):
+                profile.delete()
+                raise ValidationError("full clean error in contact")
+            else:
+                raise ValidationError("full clean error in contact")
+            
+            
         else:
             contact.save()
 

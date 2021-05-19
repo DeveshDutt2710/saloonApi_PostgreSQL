@@ -24,8 +24,8 @@ class ProfileService():
     def get_profile_id(self):
         return self.profile_id
      
-    def _create_user_contact_details(self, contact_details, profile):
-        return Contact.create_contact(profile = profile, **contact_details)
+    def _create_user_contact_details(self, contact_details, profile, index):
+        return Contact.create_contact(profile = profile, **contact_details, index = index)
 
     def _create_user_address_details(self, address_details):
         return Address.create_address(address_details)
@@ -98,9 +98,9 @@ class ProfileService():
             print(type(contacts))
             print("\nCONTACTS : "+(str)(contacts))
             saved_profile = self._save_profile(Profiles(**data))
-            for contact in contacts:
+            for index, contact in enumerate(contacts):
                 # saved_profile = self._save_profile(Profiles(**data))
-                self._create_user_contact_details(contact, profile = saved_profile) 
+                self._create_user_contact_details(contact, profile = saved_profile, index = index) 
                 
         
         response = {
