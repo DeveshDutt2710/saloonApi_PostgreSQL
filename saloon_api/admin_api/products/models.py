@@ -7,7 +7,18 @@ from ..profiles.models import Profiles
 from django.db import models
 
 
+class Autocorrect(models.Model):
+    entities = models.TextField(unique = True)
 
+    @staticmethod
+    def create_autocorrect(entities):
+        autocorrect = Autocorrect(entities=entities)
+        try:
+            autocorrect.full_clean()
+        except:
+            pass            
+        else:
+            autocorrect.save()
 
 
 class Products(models.Model):

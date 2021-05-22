@@ -5,7 +5,7 @@ from .serializers import ProductSerializer, VendorSerializer
 from rest_framework import serializers
 from django.core.serializers import serialize
 from ..profiles.serializers import ProfileSerializer
-from .models import Products
+from .models import Products, Autocorrect
 from ..profiles.models import Profiles
 from utility.exception_utilities import CustomException
 from rest_framework import status as status_codes
@@ -77,6 +77,7 @@ class ProductService():
             raise CustomException(response, status_code=status_codes.HTTP_400_BAD_REQUEST)
 
         data['vendor'] = ProductsHelper.fetch_vendor(data.pop('vendor_id'))
+        Autocorrect.create_autocorrect(entities=data['name'])
 
         saved_product_id = Products(**data).save()
 
@@ -151,22 +152,17 @@ class ProductService():
         return response
     
     def autocorrect_query(self, data):
-        profile_names = list(Profiles.objects.values_list('name', flat=True))
-        profile_email = list(Profiles.objects.values_list('profile_contacts__email', flat=True))
-        profile_phone = list(Profiles.objects.values_list('profile_contacts__phone', flat=True))
-        product_name = list(Products.objects.values_list('name', flat=True))
-        product_vendor_name = list(Products.objects.values_list('vendor__name', flat=True))
-        product_description = list(Products.objects.values_list('description', flat=True))
-        
-        keys = profile_names + profile_email + profile_phone + product_name + product_vendor_name + product_description
-        list_preferred = []
-        for key in keys:
-            if(SimilarityDistance.get_similarity_distance(data['query'], str(key),len(data['query']), len(str(key))) < 3):
-                list_preferred.append(str(key))
+        entities = list(Autocorrect.objects.values_list('entities', flat=True))
+
+        list_display = []
+        for key in entities:
+            if(SimilarityDistance.get_similarity_distance(data['query'], str(key),len(data['query']), len(str(key))) < 5):
+                if((str(key))[0] == data['query'][0]):
+                    list_display.append(str(key))
 
         response = {
             'success': True,
-            'suggestions' : list_preferred
+            'suggestions' : list_display
         }
 
         return response

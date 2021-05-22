@@ -3,6 +3,7 @@ from utility.pagination_utilities import PaginationUtilities
 from .serializers import ProfileSerializer
 from ..serializers import BsonSerializer
 from .models import Profiles, Contact, Address, PrivacySettings
+from ..products.models import Autocorrect
 from django.core.exceptions import ValidationError
 from utility.exception_utilities import CustomException
 from rest_framework import status as status_codes
@@ -101,7 +102,7 @@ class ProfileService():
             for index, contact in enumerate(contacts):
                 # saved_profile = self._save_profile(Profiles(**data))
                 self._create_user_contact_details(contact, profile = saved_profile, index = index) 
-                
+        Autocorrect.create_autocorrect(entities=data['name'])        
         
         response = {
             'success': True,
