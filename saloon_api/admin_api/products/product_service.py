@@ -157,8 +157,8 @@ class ProductService():
         list_display = []
         for key in entities:
             if(SimilarityDistance.get_similarity_distance(data['query'], str(key),len(data['query']), len(str(key))) < 5):
-                if((str(key))[0] == data['query'][0]):
-                    list_display.append(str(key))
+                list_display.append(str(key))
+                    
 
         response = {
             'success': True,

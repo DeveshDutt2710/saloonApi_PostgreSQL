@@ -1,6 +1,6 @@
 from django.db.models import Q
 from utility.pagination_utilities import PaginationUtilities
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer,ContactSerializer
 from ..serializers import BsonSerializer
 from .models import Profiles, Contact, Address, PrivacySettings
 from ..products.models import Autocorrect
@@ -80,9 +80,13 @@ class ProfileService():
         return response
 
     def fetch_profile_by_id(self) -> dict:
-        profiles = Profiles.get_object_or_raise_exception(self.get_profile_id())
-
-        profile_data = ProfileSerializer(profiles)
+        # profiles = Profiles.get_object_or_raise_exception(self.get_profile_id())
+        profiles = Profiles.objects.filter(id = self.get_profile_id())
+        print(profiles.query)
+        # profiles_contacts = Contact.objects.filter(profile_id = self.get_profile_id())
+        # print(profiles_contacts)
+        # profile_data = ContactSerializer(profiles_contacts, many = True)
+        profile_data = ProfileSerializer(profiles, many = True)
 
         response = {
             'success': True,
@@ -144,6 +148,7 @@ class ProfileService():
         return response
 
     def search_profile(self, data):
+        
 
         profiles = Profiles.objects.filter(Q(name__icontains = data['query'])
                                     |Q(profile_contacts__email__icontains = data['query'])
